@@ -24,10 +24,8 @@
 pipeline {
   agent any
 
-/* Removing parameter block until we fully figure out how to
- * integrate it with a github project.
   parameters {
-    choice(name: 'DOCKERFILE',
+    choice(name: 'PDOCKERFILE',
            choices: ['Dockerfile.centos.7', 'Dockerfile.leap.15',
                      'Dockerfile.ubuntu.1804'],
            description: 'Dockerfile to use.')
@@ -56,13 +54,14 @@ pipeline {
     string(name: 'PGIT_PREVIOUS_SUCCESSFUL_COMMIT', defaultValue: '',
            description: 'GIT previous successful commit')
   }
-*/
+
   environment {
     GITHUB_CREDS = 'aa4ae90b-b992-4fb6-b33b-236a53a26f77'
     BAHTTPS_PROXY = "${env.HTTP_PROXY ? '--build-arg HTTP_PROXY="' + env.HTTP_PROXY + '" --build-arg http_proxy="' + env.HTTP_PROXY + '"' : ''}"
     BAHTTP_PROXY = "${env.HTTP_PROXY ? '--build-arg HTTPS_PROXY="' + env.HTTPS_PROXY + '" --build-arg https_proxy="' + env.HTTPS_PROXY + '"' : ''}"
     UID=sh(script: "id -u", returnStdout: true)
     BUILDARGS = "--build-arg NOBUILD=1 --build-arg UID=$env.UID $env.BAHTTP_PROXY $env.BAHTTPS_PROXY"
+    MY_PDOCKERFILE = "${params.PDOCKERFILE ? params.PDOCKERFILE : 'Dockerfile.centos.7'}"
     MY_DOCKERFILE = 'Dockerfile.centos.7'
 /* Removing parameter block until we fully figure out how to
  * integrate it with a github project.
@@ -108,7 +107,7 @@ pipeline {
         // Just use CentOS for lint checks.
         agent {
            dockerfile {
-             filename '${MY_DOCKERFILE}'
+             filename "${params.PDOCKERFILE ? params.PDOCKERFILE : 'Dockerfile.centos.7'}"
              dir 'scons_local/docker'
              label 'docker_runner'
              additionalBuildArgs '$BUILDARGS'
@@ -122,7 +121,7 @@ pipeline {
       stage ('fuse build') {
         agent {
           dockerfile {
-            filename '${MY_DOCKERFILE}'
+            filename "${params.PDOCKERFILE ? params.PDOCKERFILE : 'Dockerfile.centos.7'}"
             dir 'scons_local/docker'
             label 'docker_runner'
             additionalBuildArgs '$BUILDARGS'
@@ -149,7 +148,7 @@ pipeline {
       stage ('openpa prebuild') {
         agent {
           dockerfile {
-            filename '${MY_DOCKERFILE}'
+            filename "${params.PDOCKERFILE ? params.PDOCKERFILE : 'Dockerfile.centos.7'}"
             dir 'scons_local/docker'
             label 'docker_runner'
             additionalBuildArgs '$BUILDARGS'
@@ -174,7 +173,7 @@ pipeline {
       stage ('hwloc prebuild') {
         agent {
           dockerfile {
-            filename '${MY_DOCKERFILE}'
+            filename "${params.PDOCKERFILE ? params.PDOCKERFILE : 'Dockerfile.centos.7'}"
             dir 'scons_local/docker'
             label 'docker_runner'
             additionalBuildArgs '$BUILDARGS'
@@ -204,7 +203,7 @@ pipeline {
       stage ('CaRT build') {
         agent {
           dockerfile {
-            filename '${MY_DOCKERFILE}'
+            filename "${params.PDOCKERFILE ? params.PDOCKERFILE : 'Dockerfile.centos.7'}"
             dir 'scons_local/docker'
             label 'docker_runner'
             additionalBuildArgs '$BUILDARGS'
@@ -222,7 +221,7 @@ pipeline {
       stage ('daos depends') {
         agent {
           dockerfile {
-            filename '${MY_DOCKERFILE}'
+            filename "${params.PDOCKERFILE ? params.PDOCKERFILE : 'Dockerfile.centos.7'}"
             dir 'scons_local/docker'
             label 'docker_runner'
             additionalBuildArgs '$BUILDARGS'
@@ -243,7 +242,7 @@ pipeline {
       stage ('basic checks') {
         agent {
           dockerfile {
-            filename '${MY_DOCKERFILE}'
+            filename "${params.PDOCKERFILE ? params.PDOCKERFILE : 'Dockerfile.centos.7'}"
             dir 'scons_local/docker'
             label 'docker_runner'
             additionalBuildArgs '$BUILDARGS'
