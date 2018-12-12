@@ -108,7 +108,7 @@ pipeline {
         // Just use CentOS for lint checks.
         agent {
            dockerfile {
-             filename "${env.MY_DOCKERFILE}"
+             filename '${MY_DOCKERFILE}'
              dir 'scons_local/docker'
              label 'docker_runner'
              additionalBuildArgs '$BUILDARGS'
@@ -122,7 +122,7 @@ pipeline {
       stage ('fuse build') {
         agent {
           dockerfile {
-            filename "${env.MY_DOCKERFILE}"
+            filename '${MY_DOCKERFILE}'
             dir 'scons_local/docker'
             label 'docker_runner'
             additionalBuildArgs '$BUILDARGS'
@@ -149,7 +149,7 @@ pipeline {
       stage ('openpa prebuild') {
         agent {
           dockerfile {
-            filename "${env.MY_DOCKERFILE}"
+            filename '${MY_DOCKERFILE}'
             dir 'scons_local/docker'
             label 'docker_runner'
             additionalBuildArgs '$BUILDARGS'
@@ -174,7 +174,7 @@ pipeline {
       stage ('hwloc prebuild') {
         agent {
           dockerfile {
-            filename "${env.MY_DOCKERFILE}"
+            filename '${MY_DOCKERFILE}'
             dir 'scons_local/docker'
             label 'docker_runner'
             additionalBuildArgs '$BUILDARGS'
@@ -204,7 +204,7 @@ pipeline {
       stage ('CaRT build') {
         agent {
           dockerfile {
-            filename "${env.MY_DOCKERFILE}"
+            filename '${MY_DOCKERFILE}'
             dir 'scons_local/docker'
             label 'docker_runner'
             additionalBuildArgs '$BUILDARGS'
@@ -222,7 +222,7 @@ pipeline {
       stage ('daos depends') {
         agent {
           dockerfile {
-            filename "${env.MY_DOCKERFILE}"
+            filename '${MY_DOCKERFILE}'
             dir 'scons_local/docker'
             label 'docker_runner'
             additionalBuildArgs '$BUILDARGS'
@@ -243,7 +243,7 @@ pipeline {
       stage ('basic checks') {
         agent {
           dockerfile {
-            filename "${env.MY_DOCKERFILE}"
+            filename '${MY_DOCKERFILE}'
             dir 'scons_local/docker'
             label 'docker_runner'
             additionalBuildArgs '$BUILDARGS'
