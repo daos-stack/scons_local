@@ -62,9 +62,6 @@ pipeline {
     UID=sh(script: "id -u", returnStdout: true)
     BUILDARGS = "--build-arg NOBUILD=1 --build-arg UID=$env.UID $env.BAHTTP_PROXY $env.BAHTTPS_PROXY"
     MY_PDOCKERFILE = "${params.PDOCKERFILE ? params.PDOCKERFILE : 'Dockerfile.centos.7'}"
-    MY_DOCKERFILE = 'Dockerfile.centos.7'
-/* Removing parameter block until we fully figure out how to
- * integrate it with a github project.
     BRANCH_NAME = "${env.BRANCH_NAME ? env.BRANCH_NAME : params.PBRANCH_NAME}"
     CHANGE_AUTHOR = "${env.CHANGE_AUTHOR ? env.CHANGE_AUTHOR : params.PCHANGE_AUTHOR}"
     CHANGE_AUTHOR_DISPLAY_NAME = "${env.CHANGE_AUTHOR_DISPLAY_NAME ? env.CHANGE_AUTHOR_DISPLAY_NAME : params.PCHANGE_AUTHOR_DISPLAY_NAME}"
@@ -77,7 +74,7 @@ pipeline {
     GIT_COMMIT = "${env.GIT_COMMIT ? env.GIT_COMMIT : params.PGIT_COMMIT}"
     GIT_PREVIOUS_COMMIT = "${env.GIT_PREVIOUS_COMMIT ? env.GIT_PREVIOUS_COMMIT : params.PGIT_PREVIOUS_COMMIT}"
     GIT_PREVIOUS_SUCCESSFUL_COMMIT = "${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT ? env.GIT_PREVIOUS_SUCCESSFUL_COMMIT : params.PGIT_PREVIOUS_SUCCESSFUL_COMMIT}"
-*/
+
     FUSE_COMMIT = '3e2fcf3a630e575bc420df254525834504dc01b7'
     HWLOC_COMMIT = 'refs/tags/hwloc-1.11.5'
     MERCURY_COMMIT = '674e7f2bd17b5d8b85606cd152dd1bc189899b0e'
