@@ -762,7 +762,6 @@ class PreReqComponent(object):
         # Link intel symbols statically with no external visibility and
         # disable the warning about Cilk since we don't use it
         self.__env.AppendUnique(LINKFLAGS=["-Wl,--exclude-libs,ALL",
-                                           "-static-intel",
                                            "-diag-disable=10237"])
 
 
