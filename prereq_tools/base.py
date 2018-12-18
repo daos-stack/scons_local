@@ -685,7 +685,9 @@ class PreReqComponent(object):
             env.Replace(CONFIGUREDIR='#/.sconf-temp-%s' % arch,
                         CONFIGURELOG='#/config-%s.log' % arch)
 
+        self._setup_compiler()
         self.system_env = env.Clone()
+        self._setup_intelc_link()
 
         self.__build_dir = os.path.realpath(os.path.join(self.__top_dir,
                                                          build_dir_name))
@@ -729,7 +731,6 @@ class PreReqComponent(object):
         self.__build_info = BuildInfo()
         self.__build_info.update("PREFIX", self.__env.subst("$PREFIX"))
 
-        self._setup_compiler()
         self.setup_parallel_build()
 
         self.add_opts(PathVariable('ENV_SCRIPT',
@@ -759,12 +760,18 @@ class PreReqComponent(object):
         version = env.get("INTEL_C_COMPILER_VERSION")
         self.__env.Replace(INTEL_C_COMPILER_VERSION=version)
         self.__env.Replace(LINK=env.get("LINK"))
+
+    def _setup_intelc_link(self):
+        """setup link flags for Intel compiler"""
+
+        compiler = self.__env.get('COMPILER').lower()
+        if compiler != 'icc':
+            return
         # Link intel symbols statically with no external visibility and
         # disable the warning about Cilk since we don't use it
         self.__env.AppendUnique(LINKFLAGS=["-Wl,--exclude-libs,ALL",
                                            "-static-intel",
                                            "-diag-disable=10237"])
-
 
     def _setup_compiler(self):
         """Setup the compiler to use"""
