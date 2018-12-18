@@ -685,6 +685,7 @@ class PreReqComponent(object):
             env.Replace(CONFIGUREDIR='#/.sconf-temp-%s' % arch,
                         CONFIGURELOG='#/config-%s.log' % arch)
 
+        self._setup_compiler()
         self.system_env = env.Clone()
 
         self.__build_dir = os.path.realpath(os.path.join(self.__top_dir,
@@ -729,7 +730,6 @@ class PreReqComponent(object):
         self.__build_info = BuildInfo()
         self.__build_info.update("PREFIX", self.__env.subst("$PREFIX"))
 
-        self._setup_compiler()
         self.setup_parallel_build()
 
         self.add_opts(PathVariable('ENV_SCRIPT',
