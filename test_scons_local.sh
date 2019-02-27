@@ -67,9 +67,10 @@ command -v clang-format >> /dev/null 2>&1
 if [ "${PIPESTATUS[0]}" -eq 0 ]; then
     set -e
     directory=$(pwd)
-    ln -s "${directory}" "${directory}/test/tool/site_scons"
+    site_scons="${directory}/test/tool/site_scons"
+    trap 'rm -f "${site_scons}"' EXIT
+    ln -s "${directory}" "${site_scons}"
     scons -C test/tool -f SConstruct
-    rm "${directory}/test/tool/site_scons"
 fi
 set -e
 
