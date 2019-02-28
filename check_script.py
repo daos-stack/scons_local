@@ -62,7 +62,6 @@ class WrapScript(object):
                 for var in match.group(2).split():
                     newvar = var.strip("\",     '")
                     variables.append(newvar)
-                print "write '%s'" % variables
                 new_lineno += self.write_variables(outfile, match.group(1),
                                                    variables)
 
@@ -77,7 +76,6 @@ class WrapScript(object):
                 for var in match.group(2).split():
                     newvar = var.strip("\",     '")
                     variables.append(newvar)
-                print "read '%s'" % variables
                 new_lineno += self.read_variables(outfile, match.group(1),
                                                   variables)
 
