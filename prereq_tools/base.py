@@ -1054,6 +1054,15 @@ class PreReqComponent(object):
                 continue
             self.__required[comp] = False
             try:
+# Phyl
+                if (comp == "hwloc"):
+                    import subprocess
+                    print ("****\nls -l hwloc* = \n")
+                    subprocess.call(['ls -l hwloc*'], shell=True)
+                    print("\n")
+                    subprocess.call(['head -10 hwloc*'], shell=True)
+                    print("****")
+
                 comp_def.configure()
                 if comp_def.build(env, needed_libs):
                     self.__required[comp] = False
