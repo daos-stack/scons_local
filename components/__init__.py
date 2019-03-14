@@ -21,11 +21,20 @@
 # -*- coding: utf-8 -*-
 """Defines common components used by HPDD projects"""
 
+import os
+import platform
 from prereq_tools import GitRepoRetriever
 from prereq_tools import WebRetriever
 from prereq_tools import ProgramBinary
-import os
-import platform
+
+DISTRO = platform.dist(supported_dists=('redhat', 'ubuntu'))[0]
+
+USE_RPMS = False
+
+# only Jenkins can access the RPMs on Jenkins (yet)
+if os.environ.get("JENKINS_URL") == "https://build.hpdd.intel.com/":
+    if DISTRO == 'redhat':
+        USE_RPMS = True
 
 # Check if this is an ARM platform
 PROCESSOR = platform.machine()
@@ -44,50 +53,61 @@ def define_mercury(reqs):
         libs = []
     else:
         reqs.define('rt', libs=['rt'])
-    retriever = \
-        GitRepoRetriever('https://github.com/mercury-hpc/mercury.git',
-                         True)
-    reqs.define('mercury',
-                retriever=retriever,
-                commands=['cmake -DMERCURY_USE_CHECKSUMS=OFF '
-                          '-DOPA_LIBRARY=$OPENPA_PREFIX/lib/libopa.a '
-                          '-DOPA_INCLUDE_DIR=$OPENPA_PREFIX/include/ '
-                          '-DCMAKE_INSTALL_PREFIX=$MERCURY_PREFIX '
-                          '-DBUILD_EXAMPLES=OFF '
-                          '-DMERCURY_USE_BOOST_PP=ON '
-                          '-DMERCURY_USE_SELF_FORWARD=ON '
-                          '-DMERCURY_ENABLE_VERBOSE_ERROR=ON '
-                          '-DBUILD_TESTING=ON '
-                          '-DNA_USE_OFI=ON '
-                          '-DBUILD_DOCUMENTATION=OFF '
-                          '-DBUILD_SHARED_LIBS=ON $MERCURY_SRC '
-                          '-DCMAKE_INSTALL_RPATH=$MERCURY_PREFIX/lib '
-                          '-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE '
-                          '-DOFI_INCLUDE_DIR=$OFI_PREFIX/include '
-                          '-DOFI_LIBRARY=$OFI_PREFIX/lib/libfabric.so'
-                          , 'make $JOBS_OPT', 'make install'],
-                libs=['mercury', 'na', 'mercury_util'],
-                requires=['openpa', 'boost', 'ofi'] + libs,
-                extra_include_path=[os.path.join('include', 'na')],
-                out_of_src_build=True)
+    if not USE_RPMS:
+        retriever = \
+            GitRepoRetriever('https://github.com/mercury-hpc/mercury.git',
+                             True)
+        reqs.define('mercury',
+                    retriever=retriever,
+                    commands=['cmake -DMERCURY_USE_CHECKSUMS=OFF '
+                              '-DOPA_LIBRARY=$OPENPA_PREFIX/lib/libopa.a '
+                              '-DOPA_INCLUDE_DIR=$OPENPA_PREFIX/include/ '
+                              '-DCMAKE_INSTALL_PREFIX=$MERCURY_PREFIX '
+                              '-DBUILD_EXAMPLES=OFF '
+                              '-DMERCURY_USE_BOOST_PP=ON '
+                              '-DMERCURY_USE_SELF_FORWARD=ON '
+                              '-DMERCURY_ENABLE_VERBOSE_ERROR=ON '
+                              '-DBUILD_TESTING=ON '
+                              '-DNA_USE_OFI=ON '
+                              '-DBUILD_DOCUMENTATION=OFF '
+                              '-DBUILD_SHARED_LIBS=ON $MERCURY_SRC '
+                              '-DCMAKE_INSTALL_RPATH=$MERCURY_PREFIX/lib '
+                              '-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE '
+                              '-DOFI_INCLUDE_DIR=$OFI_PREFIX/include '
+                              '-DOFI_LIBRARY=$OFI_PREFIX/lib/libfabric.so'
+                              , 'make $JOBS_OPT', 'make install'],
+                    libs=['mercury', 'na', 'mercury_util'],
+                    requires=['openpa', 'boost', 'ofi'] + libs,
+                    extra_include_path=[os.path.join('include', 'na')],
+                    out_of_src_build=True)
+    else:
+        reqs.define('mercury', libs=['mercury', 'na', 'mercury_util'],
+                    package='mercury-devel')
 
-    retriever = GitRepoRetriever('https://github.com/ofiwg/libfabric')
-    reqs.define('ofi',
-                retriever=retriever,
-                commands=['./autogen.sh',
-                          './configure --prefix=$OFI_PREFIX',
-                          'make $JOBS_OPT',
-                          'make install'],
-                libs=['fabric'],
-                headers=['rdma/fabric.h'])
+    if not USE_RPMS:
+        retriever = GitRepoRetriever('https://github.com/ofiwg/libfabric')
+        reqs.define('ofi',
+                    retriever=retriever,
+                    commands=['./autogen.sh',
+                              './configure --prefix=$OFI_PREFIX',
+                              'make $JOBS_OPT',
+                              'make install'],
+                    libs=['fabric'],
+                    headers=['rdma/fabric.h'])
+    else:
+        reqs.define('ofi', headers=['rdma/fabric.h'],
+                    libs=['fabric'], package='libfabric-devel')
 
-    reqs.define('openpa',
-                retriever=GitRepoRetriever(
-                    'http://git.mcs.anl.gov/radix/openpa.git'),
-                commands=['$LIBTOOLIZE', './autogen.sh',
-                          './configure --prefix=$OPENPA_PREFIX',
-                          'make $JOBS_OPT',
-                          'make install'], libs=['opa'])
+    if not USE_RPMS:
+        reqs.define('openpa',
+                    retriever=GitRepoRetriever(
+                        'http://git.mcs.anl.gov/radix/openpa.git'),
+                    commands=['$LIBTOOLIZE', './autogen.sh',
+                              './configure --prefix=$OPENPA_PREFIX',
+                              'make $JOBS_OPT',
+                              'make install'], libs=['opa'])
+    else:
+        reqs.define('openpa', package='openpa-devel')
 
     if ARM_PLATFORM:
         url = "https://github.com/mercury-hpc/mchecksum.git"
@@ -142,28 +162,36 @@ def define_common(reqs):
 
 def define_pmix(reqs):
     """PMIX and related components"""
-    url = 'https://www.open-mpi.org/software/hwloc/v1.11' \
-        '/downloads/hwloc-1.11.5.tar.gz'
-    web_retriever = \
-        WebRetriever(url)
-    reqs.define('hwloc', retriever=web_retriever,
-                commands=['./configure --prefix=$HWLOC_PREFIX',
-                          'make $JOBS_OPT', 'make install'],
-                headers=['hwloc.h'],
-                libs=['hwloc'])
+    if not USE_RPMS:
+        url = 'https://www.open-mpi.org/software/hwloc/v1.11' \
+            '/downloads/hwloc-1.11.5.tar.gz'
+        web_retriever = \
+            WebRetriever(url)
+        reqs.define('hwloc', retriever=web_retriever,
+                    commands=['./configure --prefix=$HWLOC_PREFIX',
+                              'make $JOBS_OPT', 'make install'],
+                    headers=['hwloc.h'],
+                    libs=['hwloc'])
 
-    retriever = GitRepoRetriever('https://github.com/pmix/master')
-    reqs.define('pmix',
-                retriever=retriever,
-                commands=['./autogen.pl',
-                          './configure --with-platform=optimized '
-                          '--prefix=$PMIX_PREFIX '
-                          '--with-hwloc=$HWLOC_PREFIX',
-                          'make $JOBS_OPT', 'make install'],
-                libs=['pmix'],
-                required_progs=['autoreconf', 'aclocal', 'libtool'],
-                headers=['pmix.h'],
-                requires=['hwloc', 'event'])
+        retriever = GitRepoRetriever('https://github.com/pmix/master')
+    else:
+        reqs.define('hwloc', headers=['hwloc.h'], libs=['hwloc'],
+                    package='hwloc-devel')
+    if not USE_RPMS:
+        reqs.define('pmix',
+                    retriever=retriever,
+                    commands=['./autogen.pl',
+                              './configure --with-platform=optimized '
+                              '--prefix=$PMIX_PREFIX '
+                              '--with-hwloc=$HWLOC_PREFIX',
+                              'make $JOBS_OPT', 'make install'],
+                    libs=['pmix'],
+                    required_progs=['autoreconf', 'aclocal', 'libtool'],
+                    headers=['pmix.h'],
+                    requires=['hwloc', 'event'])
+    else:
+        reqs.define('pmix', libs=['pmix'], headers=['pmix.h'],
+                    package='pmix-devel', requires=['hwloc', 'event'])
 
 
     retriever = GitRepoRetriever('https://github.com/pmix/prrte')
@@ -181,23 +209,26 @@ def define_pmix(reqs):
                 requires=['pmix', 'hwloc', 'event'])
 
 
-    retriever = GitRepoRetriever('https://github.com/open-mpi/ompi',
-                                 True)
-    reqs.define('ompi',
-                retriever=retriever,
-                commands=['./autogen.pl --no-oshmem',
-                          './configure --with-platform=optimized '
-                          '--enable-orterun-prefix-by-default '
-                          '--prefix=$OMPI_PREFIX '
-                          '--with-pmix=$PMIX_PREFIX '
-                          '--disable-mpi-fortran '
-                          '--enable-contrib-no-build=vt '
-                          '--with-libevent=external '
-                          '--with-hwloc=$HWLOC_PREFIX',
-                          'make $JOBS_OPT', 'make install'],
-                libs=['open-rte'],
-                required_progs=['g++', 'flex'],
-                requires=['pmix', 'hwloc', 'event'])
+    if not USE_RPMS:
+        retriever = GitRepoRetriever('https://github.com/open-mpi/ompi',
+                                     True)
+        reqs.define('ompi',
+                    retriever=retriever,
+                    commands=['./autogen.pl --no-oshmem',
+                              './configure --with-platform=optimized '
+                              '--enable-orterun-prefix-by-default '
+                              '--prefix=$OMPI_PREFIX '
+                              '--with-pmix=$PMIX_PREFIX '
+                              '--disable-mpi-fortran '
+                              '--enable-contrib-no-build=vt '
+                              '--with-libevent=external '
+                              '--with-hwloc=$HWLOC_PREFIX',
+                              'make $JOBS_OPT', 'make install'],
+                    libs=['open-rte'],
+                    required_progs=['g++', 'flex'],
+                    requires=['pmix', 'hwloc', 'event'])
+    else:
+        reqs.define('ompi', libs=['open-rte'], package='ompi-devel')
 
 
 
