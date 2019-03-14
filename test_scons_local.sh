@@ -52,27 +52,20 @@ if [ "$1" != "utest" ]; then
   python test/validate_build_info.py
   scons -C test -f SConstruct "${prebuilt2[@]}" --build-deps=yes --config=force
   python test/validate_build_info.py
-  set +e
-  scons -C test -f SConstruct "${prebuilt2[@]}" --build-deps=yes \
-        --config=force --require-optional
-  if [ "${PIPESTATUS[0]}" -eq 0 ]; then
-      echo "Test for --require-optional failed"
-      exit 1
+  if scons -C test -f SConstruct "${prebuilt2[@]}" --build-deps=yes \
+        --config=force --require-optional; then
+    echo "Test for --require-optional failed"
+    exit 1
   fi
-  set -e
 fi
 
-set +e
-command -v clang-format >> /dev/null 2>&1
-if [ "${PIPESTATUS[0]}" -eq 0 ]; then
-    set -e
+if command -v clang-format >> /dev/null 2>&1; then
     directory=$(pwd)
     site_scons="${directory}/test/tool/site_scons"
     trap 'rm -f "${site_scons}"' EXIT
     ln -s "${directory}" "${site_scons}"
     scons -C test/tool -f SConstruct
 fi
-set -e
 
 check_cmd()
 {
@@ -92,13 +85,13 @@ check_cmd()
         fi
     fi
     grep "Valgrind.*check failed" scons_utest_output.txt
-    result=$?
+    result=${PIPESTATUS[0]}
     if [ "$issues" = "clean" ]; then
-        if [ $result -eq 0 ]; then
+        if [ "$result" -eq "0" ]; then
             failed=$((failed + 1))
         fi
     else
-        if [ $result -ne 0 ]; then
+        if [ "$result" -ne "0" ]; then
             failed=$((failed + 1))
         fi
     fi
@@ -123,10 +116,10 @@ run_unit_tests()
     check_cmd 'fail' 'clean' scons -C test -f SConstruct.utest \
                            --test-name=fail
     if [ $failed -ne 0 ]; then
-    echo "Unit test failure"
-    exit $failed
+        echo "Unit test failure"
+        exit $failed
     else
-    echo "All unit tests passed"
+        echo "All unit tests passed"
     fi
 }
 
