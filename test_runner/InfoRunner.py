@@ -98,7 +98,7 @@ class InfoRunner():
             path_list.pop(index)
         if path.find(ompi_path) < 0:
             path_list.insert(0, ompi_path)
-        installed_path = self.info['PREFIX']
+        installed_path = os.path.join(self.info['PREFIX'], 'lib', 'cart')
         test_path = os.path.join(installed_path, "TESTING", "tests")
         if path.find(test_path) < 0:
             path_list.insert(0, test_path)
@@ -109,8 +109,8 @@ class InfoRunner():
         os.environ['PATH'] = newpath
         print("TestRunner: new path: %s" % newpath)
         print("------------------------------------------------")
-        installed_libpath = os.path.join(self.info['PREFIX'], "lib")
-        ompi_libpath = os.path.join(self.info['OMPI_PREFIX'], "lib")
+        installed_libpath = os.path.join(self.info['PREFIX'], "lib64")
+        ompi_libpath = os.path.join(self.info['OMPI_PREFIX'], "lib64")
         libpath = os.getenv("LD_LIBRARY_PATH")
         if libpath:
             libpath_list = libpath.split(":")
