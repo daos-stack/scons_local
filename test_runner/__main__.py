@@ -144,6 +144,8 @@ def load_config(logger, config_file):
     if name is None:
         name = validate_path("/home/autotest", config_file)
     if name is None:
+        name = validate_path("/var/tmp", config_file)
+    if name is None:
         logger.error("Config file in disallowed location ", name)
         return config
     with open(name, "r") as config_fd:
