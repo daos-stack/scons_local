@@ -196,7 +196,11 @@ def main():
             newname = "{}_{}".format(log_base, datetime.now().isoformat(). \
                                      replace(':', '.'))
             os.rename(log_base, newname)
-        os.makedirs(log_base)
+        try:
+            os.makedirs(log_base)
+        except Exception:
+            print("Exception creating {}".log_base)
+            raise
     # setup default evnironment variables and path
     info.env_setup()
     # in some cases the description file can override this key
