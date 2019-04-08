@@ -239,7 +239,8 @@ def define_components(reqs):
                     'https://github.com/01org/isa-l.git'),
                 commands=isal_build,
                 required_progs=['nasm', 'yasm'],
-                libs=["isal"])
+                libs=["isal"],
+                package='isa-l-devel' if inst(reqs, 'isal') else None)
 
 
     retriever = GitRepoRetriever("https://github.com/pmem/pmdk.git")
@@ -251,7 +252,8 @@ def define_components(reqs):
     reqs.define('pmdk',
                 retriever=retriever,
                 commands=pmdk_build,
-                libs=["pmemobj"])
+                libs=["pmemobj"],
+                package='pmdk-devel' if inst(reqs, 'pmdk') else None)
 
     retriever = GitRepoRetriever("http://git.mcs.anl.gov/argo/argobots.git",
                                  True)
@@ -263,7 +265,8 @@ def define_components(reqs):
                           'make $JOBS_OPT',
                           'make $JOBS_OPT install'],
                 libs=['abt'],
-                headers=['abt.h'])
+                headers=['abt.h'],
+                package='argobots-devel' if inst(reqs, 'argobots') else None)
 
     retriever = GitRepoRetriever("https://review.hpdd.intel.com/daos/iof",
                                  True)
@@ -290,7 +293,8 @@ def define_components(reqs):
                           "USE_INSTALLED=" + ','.join(reqs.installed) + ' ' +
                           "install"],
                 headers=['daos.h'],
-                requires=['cart', 'ompi'])
+                requires=['cart', 'ompi'],
+                package='daos-devel' if inst(reqs, 'daos') else None)
 
     retriever = GitRepoRetriever('https://github.com/libfuse/libfuse')
     reqs.define('fuse',
@@ -305,7 +309,8 @@ def define_components(reqs):
                 defines=["FUSE_USE_VERSION=32"],
                 required_progs=['libtoolize', NINJA_PROG],
                 headers=['fuse3/fuse.h'],
-                out_of_src_build=True)
+                out_of_src_build=True,
+                package='fuse-devel' if inst(reqs, 'fuse') else None)
 
     retriever = GitRepoRetriever("https://github.com/daos-stack/cart",
                                  True)
@@ -330,19 +335,23 @@ def define_components(reqs):
                 commands=['git checkout fio-3.3',
                           './configure --prefix="$FIO_PREFIX"',
                           'make $JOBS_OPT', 'make install'],
-                progs=['genfio', 'fio'])
+                progs=['genfio', 'fio'],
+                package='fio-devel' if inst(reqs, 'fio') else None)
 
     retriever = GitRepoRetriever("https://github.com/spdk/spdk.git", True)
     reqs.define('spdk',
                 retriever=retriever,
                 commands=['./configure --prefix="$SPDK_PREFIX" ' \
-                          ' --with-fio="$FIO_SRC"',
+                          ' --with-fio=' +
+                          check(reqs, 'fio', '$FIO_SRC',
+                                '/usr/src/debug/fio-3.3'),
                           'make $JOBS_OPT', 'make install',
                           'mkdir -p "$SPDK_PREFIX/share/spdk"',
                           'cp -r  include scripts examples/nvme/fio_plugin ' \
                           '"$SPDK_PREFIX/share/spdk"'],
                 libs=['spdk'],
-                requires=['fio'])
+                requires=['fio'],
+                package='spdk-devel' if inst(reqs, 'spdk') else None)
 
     url = 'https://github.com/protobuf-c/protobuf-c/releases/download/' \
         'v1.3.0/protobuf-c-1.3.0.tar.gz'
@@ -353,6 +362,7 @@ def define_components(reqs):
                           '--disable-protoc', 'make $JOBS_OPT',
                           'make install'],
                 libs=['protobuf-c'],
-                headers=['protobuf-c/protobuf-c.h'])
+                headers=['protobuf-c/protobuf-c.h'],
+                package='protobuf-c-devel' if inst(reqs, 'protobuf-c') else None)
 
 __all__ = ['define_components']
