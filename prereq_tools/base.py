@@ -1059,8 +1059,11 @@ class PreReqComponent(object):
                     self.__required[comp] = False
                     changes = True
                 else:
+                    prebuilt = os.path.join(env.subst("$PREBUILT_PREFIX"),
+                                            comp_def.name)
                     if comp_def.src_path and \
-                       not os.path.exists(comp_def.src_path):
+                       not os.path.exists(comp_def.src_path) and \
+                       not os.path.exists(prebuilt):
                         self.save_component_prefix('%s_PREFIX' %
                                                    comp_def.name.upper(),
                                                    "/usr")
