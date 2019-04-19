@@ -792,8 +792,8 @@ class PreReqComponent(object):
             covfile = self.__env.get('PREFIX') + "/../../test.cov"
             if os.path.isfile(covfile):
                 os.remove(covfile)
-            os.system('/opt/BullseyeCoverage/bin/cov01 -1');
-            os.system('/opt/BullseyeCoverage/bin/cov01 -s');
+            os.system('/opt/BullseyeCoverage/bin/cov01 -1')
+            os.system('/opt/BullseyeCoverage/bin/cov01 -s')
 
         if self.__check_only:
             # Have to temporarily turn off dry run to allow this check.
