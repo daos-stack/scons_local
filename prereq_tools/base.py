@@ -788,13 +788,6 @@ class PreReqComponent(object):
         env = self.__env.Clone()
         config = Configure(env)
 
-        if compiler == 'covc':
-            covfile = self.__env.get('PREFIX') + "/../../test.cov"
-            if os.path.isfile(covfile):
-                os.remove(covfile)
-            os.system('/opt/BullseyeCoverage/bin/cov01 -1')
-            os.system('/opt/BullseyeCoverage/bin/cov01 -s')
-
         if self.__check_only:
             # Have to temporarily turn off dry run to allow this check.
             env.SetOption('no_exec', False)
@@ -808,6 +801,15 @@ class PreReqComponent(object):
                 raise MissingSystemLibs(prog)
             args = {name : prog}
             self.__env.Replace(**args)
+
+        if compiler == 'covc':
+            covfile = self.__top_dir + "/test.cov"
+            if os.path.isfile(covfile):
+                os.remove(covfile)
+            commands = ['$COV01 -1', '$COV01 -s']
+            if not RUNNER.run_commands(commands):
+                raise BuildFailure("cov01")
+
         config.Finish()
         if self.__check_only:
             # Restore the dry run state
