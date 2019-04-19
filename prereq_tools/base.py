@@ -769,11 +769,12 @@ class PreReqComponent(object):
     def _setup_compiler(self):
         """Setup the compiler to use"""
         compiler_map = {'gcc': {'CC' : 'gcc', 'CXX' : 'g++'},
+                        'covc' : {'CC' : 'gcc', 'CXX' : 'g++'},
                         'clang' : {'CC' : 'clang', 'CXX' : 'clang++'},
                         'icc' : {'CC' : 'icc', 'CXX' : 'icpc'},
                        }
         self.add_opts(EnumVariable('COMPILER', "Set the compiler family to use",
-                                   'gcc', ['gcc', 'clang', 'icc'],
+                                   'gcc', ['gcc', 'covc', 'clang', 'icc'],
                                    ignorecase=1))
 
         if GetOption('clean'):
