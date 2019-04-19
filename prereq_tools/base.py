@@ -769,7 +769,9 @@ class PreReqComponent(object):
     def _setup_compiler(self):
         """Setup the compiler to use"""
         compiler_map = {'gcc': {'CC' : 'gcc', 'CXX' : 'g++'},
-                        'covc' : {'CC' : 'gcc', 'CXX' : 'g++'},
+                        'covc' : {'CC' : '/opt/BullseyeCoverage/bin/gcc',
+                                  'CXX' : '/opt/BullseyeCoverage/bin/g++',
+                                  'COV01' : '/opt/BullseyeCoverage/bin/cov01'},
                         'clang' : {'CC' : 'clang', 'CXX' : 'clang++'},
                         'icc' : {'CC' : 'icc', 'CXX' : 'icpc'},
                        }
@@ -785,6 +787,13 @@ class PreReqComponent(object):
             self._setup_intelc()
         env = self.__env.Clone()
         config = Configure(env)
+
+        if compiler == 'covc':
+            covfile = self.__env.get('PREFIX') + "/../../test.cov"
+            if os.path.isfile(covfile):
+                os.remove(covfile)
+            os.system('/opt/BullseyeCoverage/bin/cov01 -1');
+            os.system('/opt/BullseyeCoverage/bin/cov01 -s');
 
         if self.__check_only:
             # Have to temporarily turn off dry run to allow this check.
