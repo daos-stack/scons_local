@@ -1036,7 +1036,7 @@ class PreReqComponent(object):
         if comp_def.src_path and \
            not os.path.exists(comp_def.src_path) and \
            not os.path.exists(prebuilt1) and \
-           and not os.path.exists(prebuilt2):
+           not os.path.exists(prebuilt2):
             self.save_component_prefix('%s_PREFIX' %
                                        comp_def.name.upper(),
                                        "/usr")
