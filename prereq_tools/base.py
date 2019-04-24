@@ -1030,12 +1030,13 @@ class PreReqComponent(object):
         prebuilt1 = os.path.join(env.subst("$PREBUILT_PREFIX"),
                                  comp_def.name)
         opt_name = "%s_PREBUILT" % comp_def.name.upper()
-        prebuilt2 = self.__env.get(opt_name)
+        # prebuilt2 can be None so add a default
+        prebuilt2 = self.__env.get(opt_name, "/__fake__")
 
         if comp_def.src_path and \
            not os.path.exists(comp_def.src_path) and \
            not os.path.exists(prebuilt1) and \
-           prebuilt2 and not os.path.exists(prebuilt2):
+           and not os.path.exists(prebuilt2):
             self.save_component_prefix('%s_PREFIX' %
                                        comp_def.name.upper(),
                                        "/usr")
