@@ -523,16 +523,17 @@ class WebRetriever(object):
         for i in range(0, retries + 1):
             command = ['curl -L -O %s' % self.url]
 
-            if not RUNNER.run_commands(command):
-                print "Try #%d to get %s failed" % (i + 1, self.url)
-                continue
+            failure_reason = "Download command failed"
+            if RUNNER.run_commands(command):
+                if self.check_md5(basename):
+                    print "Successfully downloaded %s" % self.url
+                    return True
 
-            if self.check_md5(basename):
-                print "Successfully downloaded %s" % self.url
-                return True
+                failure_reason = "md5 mismatch"
 
-            print "Try #%d to get %s failed due to md5 mismatch" % (i + 1,
-                                                                    self.url)
+            print "Try #%d to get %s failed: %s" % (i + 1, self.url,
+                                                    failure_reason)
+
             if i != retries:
                 time.sleep(initial_sleep)
                 initial_sleep *= 2
