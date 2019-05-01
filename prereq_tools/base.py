@@ -518,9 +518,9 @@ class WebRetriever(object):
     def download(self, basename):
         """Download the file"""
         initial_sleep = 1
-        tries = 4
+        retries = 3
         # Retry download a few times if it fails
-        for i in range(0, 4):
+        for i in range(0, retries + 1):
             command = ['curl -L -O %s' % self.url]
 
             if not RUNNER.run_commands(command):
@@ -533,7 +533,7 @@ class WebRetriever(object):
 
             print "Try #%d to get %s failed due to md5 mismatch" % (i + 1,
                                                                     self.url)
-            if (i + 1) != tries:
+            if i != retries:
                 time.sleep(initial_sleep)
                 initial_sleep *= 2
 
