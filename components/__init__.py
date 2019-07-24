@@ -112,24 +112,6 @@ def define_mercury(reqs):
                           'make install'], libs=['opa'],
                 package='openpa-devel' if inst(reqs, 'openpa') else None)
 
-    if ARM_PLATFORM:
-        url = "https://github.com/mercury-hpc/mchecksum.git"
-        retriever = GitRepoRetriever(url)
-        reqs.define('mchecksum',
-                    retriever=retriever,
-                    commands=['cmake -DBUILD_SHARED_LIBS=ON $MCHECKSUM_SRC'
-                              '-DBUILD_TESTING=ON '
-                              '-DCMAKE_INSTALL_PREFIX=$MCHECKSUM_PREFIX '
-                              '-DMCHECKSUM_ENABLE_COVERAGE=OFF '
-                              '-DMCHECKSUM_ENABLE_VERBOSE_ERROR=ON '
-                              '-DMCHECKSUM_USE_ZLIB=OFF '
-                              '-DCMAKE_INSTALL_RPATH=$MCHECKSUM_PREFIX/lib '
-                              '-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE ',
-                              'make $JOBS_OPT', 'make install'],
-                    libs=['mchecksum'],
-                    out_of_src_build=True)
-
-
 def define_common(reqs):
     """common system component definitions"""
     reqs.define('cunit', libs=['cunit'], headers=['CUnit/Basic.h'],
