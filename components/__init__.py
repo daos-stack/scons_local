@@ -245,15 +245,14 @@ def define_components(reqs):
                 required_progs=['nasm', 'yasm'],
                 libs=["isal"])
     reqs.define('isal_crypto',
-                retriever=GitRepoRetriever(
-                        "https://github.com/intel/isa-l_crypto"),
+                retriever=GitRepoRetriever("https://github.com/intel/"
+                                           "isa-l_crypto"),
                 commands=['./autogen.sh ',
                           './configure --prefix=$ISAL_CRYPTO_PREFIX '
                           '--libdir=$ISAL_CRYPTO_PREFIX/lib',
                           'make $JOBS_OPT', 'make install'],
                 required_progs=['nasm', 'yasm'],
-                libs=['isal_crypto'],
-                )
+                libs=['isal_crypto'])
 
 
     retriever = GitRepoRetriever("https://github.com/pmem/pmdk.git")
