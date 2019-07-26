@@ -112,22 +112,6 @@ def define_mercury(reqs):
                           'make install'], libs=['opa'],
                 package='openpa-devel' if inst(reqs, 'openpa') else None)
 
-    url = "https://github.com/mercury-hpc/mchecksum.git"
-    retriever = GitRepoRetriever(url)
-    reqs.define('mchecksum',
-                retriever=retriever,
-                commands=['cmake -DBUILD_SHARED_LIBS=ON $MCHECKSUM_SRC '
-                          '-DBUILD_TESTING=ON '
-                          '-DCMAKE_INSTALL_PREFIX=$MCHECKSUM_PREFIX '
-                          '-DMCHECKSUM_ENABLE_COVERAGE=OFF '
-                          '-DMCHECKSUM_ENABLE_VERBOSE_ERROR=ON '
-                          '-DMCHECKSUM_USE_ZLIB=OFF '
-                          '-DCMAKE_INSTALL_RPATH=$MCHECKSUM_PREFIX/lib '
-                          '-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE ',
-                          'make $JOBS_OPT', 'make install'],
-                libs=['mchecksum'],
-                out_of_src_build=True)
-
 
 def define_common(reqs):
     """common system component definitions"""
@@ -242,7 +226,6 @@ def define_components(reqs):
                 retriever=GitRepoRetriever(
                     'https://github.com/01org/isa-l.git'),
                 commands=isal_build,
-                required_progs=['nasm', 'yasm'],
                 libs=["isal"])
     reqs.define('isal_crypto',
                 retriever=GitRepoRetriever("https://github.com/intel/"
@@ -251,7 +234,6 @@ def define_components(reqs):
                           './configure --prefix=$ISAL_CRYPTO_PREFIX '
                           '--libdir=$ISAL_CRYPTO_PREFIX/lib',
                           'make $JOBS_OPT', 'make install'],
-                required_progs=['nasm', 'yasm'],
                 libs=['isal_crypto'])
 
 
