@@ -30,7 +30,7 @@ import datetime
 import json
 
 
-class BuildInfo(object):
+class BuildInfo():
     """A utility class to read build information"""
 
     def __init__(self, filename=None):

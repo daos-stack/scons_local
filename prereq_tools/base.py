@@ -32,20 +32,7 @@ import os
 import traceback
 import hashlib
 import time
-import subprocess
 import sys
-try:
-    from subprocess import DEVNULL
-except ImportError:
-    DEVNULL = open(os.devnull, "wb")
-import tarfile
-import re
-import copy
-if sys.version_info < (3, 0):
-    import ConfigParser
-else:
-    import configparser as ConfigParser
-
 from build_info import BuildInfo
 from SCons.Variables import PathVariable
 from SCons.Variables import EnumVariable
@@ -62,6 +49,20 @@ from SCons.Errors import UserError
 # pylint: enable=no-name-in-module
 # pylint: enable=import-error
 from prereq_tools import mocked_tests
+import subprocess
+try:
+    from subprocess import DEVNULL
+except ImportError:
+    DEVNULL = open(os.devnull, "wb")
+import tarfile
+import re
+import copy
+if sys.version_info < (3, 0):
+# pylint: disable=import-error
+    import ConfigParser
+# pylint: enable=import-error
+else:
+    import configparser as ConfigParser
 
 
 class DownloadFailure(Exception):
@@ -253,7 +254,7 @@ class BuildRequired(Exception):
         return "%s needs to be built, use --build-deps=yes" % self.component
 
 
-class Runner(object):
+class Runner():
     """Runs commands in a specified environment"""
     def __init__(self):
         self.env = None
@@ -323,7 +324,7 @@ the issues causing the TESTS to fail.
 """ % target[0].path
                 break
         fobj.close()
-    if mode == "memcheck" or mode == "helgrind":
+    if mode in ("memcheck", "helgrind"):
         from xml.etree import ElementTree
         for fname in target:
             if str(fname).endswith(".xml"):
@@ -394,7 +395,7 @@ def run_test(source, target, env, for_signature, mode=None):
 def modify_targets(target, source, env, mode=None):
     """Emit the target list for the unit test builder"""
     target = ["test_output"]
-    if mode == "memcheck" or mode == "helgrind":
+    if mode in ("memcheck", "helgrind"):
         for src in source:
             basename = os.path.basename(str(src))
             xml = "valgrind-%s-%s.xml" % (mode, basename)
@@ -417,7 +418,7 @@ def define_modify_targets(mode=None):
                                                       env, mode)
 
 
-class GitRepoRetriever(object):
+class GitRepoRetriever():
     """Identify a git repository from which to download sources"""
 
     def __init__(self, url, has_submodules=False, branch=None):
@@ -490,7 +491,7 @@ class GitRepoRetriever(object):
         self.get_specific(subdir, **kw)
 
 
-class WebRetriever(object):
+class WebRetriever():
     """Identify a location from where to download a source package"""
 
     def __init__(self, url, md5):
@@ -644,7 +645,7 @@ def append_if_supported(env, **kwargs):
 
     config.Finish()
 
-class ProgramBinary(object):
+class ProgramBinary():
     """Define possible names for a required executable"""
     def __init__(self, name, possible_names):
         """ Define a binary allowing for unique names on various platforms """
@@ -661,7 +662,7 @@ class ProgramBinary(object):
         return False
 
 # pylint: disable=too-many-public-methods
-class PreReqComponent(object):
+class PreReqComponent():
     """A class for defining and managing external components required
        by a project.
 
@@ -1294,7 +1295,7 @@ class PreReqComponent(object):
         self.configs.read(full_path)
 # pylint: enable=too-many-public-methods
 
-class _Component(object):
+class _Component():
     """A class to define attributes of an external component
 
     Args:
@@ -1625,8 +1626,8 @@ class _Component(object):
                 return
             if self.package is None:
                 raise MissingTargets(self.name, self.name)
-            else:
-                raise MissingTargets(self.name, self.package)
+
+            raise MissingTargets(self.name, self.package)
 
     def check_user_options(self, env, needed_libs):
         """check help and clean options"""
