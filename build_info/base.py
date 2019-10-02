@@ -21,7 +21,9 @@
 # -*- coding: utf-8 -*-
 """Classes for building external prerequisite components"""
 
-# pylint: disable=exec-used
+from __future__ import print_function
+
+#pylint: disable=exec-used
 import os
 import sys
 import datetime
@@ -39,7 +41,7 @@ class BuildInfo(object):
             with open(filename, "r") as info_file:
                 self.info = json.load(info_file)
         except ValueError:
-            print "Could not load build_info"
+            print("Could not load build_info")
 
     def update(self, var, value):
         """save a variable in the build info"""
