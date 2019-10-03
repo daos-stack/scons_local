@@ -23,7 +23,6 @@
 
 from __future__ import print_function
 
-#pylint: disable=exec-used
 import os
 import sys
 import datetime
