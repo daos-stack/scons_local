@@ -1088,7 +1088,8 @@ class PreReqComponent():
         prebuilt1 = os.path.join(env.subst("$PREBUILT_PREFIX"),
                                  comp_def.name)
         # prebuilt2 can be None so add a default
-        prebuilt2 = self.__env.get('{}_PREBUILT'.format(comp_def.name.upper()), "/__fake__")
+        prebuilt2 = self.__env.get('{}_PREBUILT'.format(comp_def.name.upper()),
+                                   "/__fake__")
         prebuilt3 = self.__env.get('{}_PREFIX'.format(comp_def.name.upper()))
 
         if comp_def.src_path and \
