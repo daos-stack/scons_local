@@ -5,7 +5,7 @@ index 08373e3..5c55d7c 100644
 @@ -147,10 +147,17 @@ na_info_parse(const char *info_string, struct na_info **na_info_ptr)
          NA_CHECK_ERROR(na_info->class_name == NULL, error, ret, NA_NOMEM_ERROR,
              "Could not duplicate NA info class name");
- 
+
 +        token = strtok_r(NULL, NA_CLASS_DELIMITER, &_locator);
 +
          /* Get protocol name */
