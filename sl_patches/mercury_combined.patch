@@ -1,11 +1,11 @@
 diff --git a/src/na/na.c b/src/na/na.c
-index 08373e3..5c55d7c 100644
+index 08373e3..80c1f86 100644
 --- a/src/na/na.c
 +++ b/src/na/na.c
 @@ -147,10 +147,17 @@ na_info_parse(const char *info_string, struct na_info **na_info_ptr)
          NA_CHECK_ERROR(na_info->class_name == NULL, error, ret, NA_NOMEM_ERROR,
              "Could not duplicate NA info class name");
-
+ 
 +        token = strtok_r(NULL, NA_CLASS_DELIMITER, &_locator);
 +
          /* Get protocol name */
@@ -14,9 +14,9 @@ index 08373e3..5c55d7c 100644
          NA_CHECK_ERROR(na_info->protocol_name == NULL, error, ret,
              NA_NOMEM_ERROR, "Could not duplicate NA info protocol name");
 +
-+       /* Get NA domain name */
-+       na_info->domain_name = strdup(_locator);
-+       NA_CHECK_ERROR(na_info->domain_name == NULL, error, ret,
++        /* Get NA domain name */
++        na_info->domain_name = strdup(_locator);
++        NA_CHECK_ERROR(na_info->domain_name == NULL, error, ret,
 +            NA_NOMEM_ERROR, "Could not duplicate NA info domain name");
      } else {
          /* Get protocol name */
@@ -34,10 +34,10 @@ index 8d0874e..f26e10a 100644
      /* Additional init info (NULL if no info) */
      const struct na_init_info *na_init_info;
 diff --git a/src/na/na_ofi.c b/src/na/na_ofi.c
-index 1cd6556..d372e1d 100644
+index 1cd6556..261fe56 100644
 --- a/src/na/na_ofi.c
 +++ b/src/na/na_ofi.c
-@@ -2910,7 +2910,8 @@ na_ofi_initialize(na_class_t *na_class, const struct na_info *na_info,
+@@ -2910,7 +2910,7 @@ na_ofi_initialize(na_class_t *na_class, const struct na_info *na_info,
                  src_addr = na_ofi_sin_addr;
                  src_addrlen = sizeof(*na_ofi_sin_addr);
                  /* Make sure we are using the right domain */
