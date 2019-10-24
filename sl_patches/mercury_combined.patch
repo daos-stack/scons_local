@@ -6,7 +6,7 @@ index 08373e3..5c55d7c 100644
          NA_CHECK_ERROR(na_info->class_name == NULL, error, ret, NA_NOMEM_ERROR,
              "Could not duplicate NA info class name");
  
-+	token = strtok_r(NULL, NA_CLASS_DELIMITER, &_locator);
++        token = strtok_r(NULL, NA_CLASS_DELIMITER, &_locator);
 +
          /* Get protocol name */
 -        na_info->protocol_name = strdup(_locator);
@@ -14,10 +14,10 @@ index 08373e3..5c55d7c 100644
          NA_CHECK_ERROR(na_info->protocol_name == NULL, error, ret,
              NA_NOMEM_ERROR, "Could not duplicate NA info protocol name");
 +
-+	/* Get NA domain name */
-+	na_info->domain_name = strdup(_locator);
-+	NA_CHECK_ERROR(na_info->domain_name == NULL, error, ret,
-+	    NA_NOMEM_ERROR, "Could not duplicate NA info domain name");
++       /* Get NA domain name */
++       na_info->domain_name = strdup(_locator);
++       NA_CHECK_ERROR(na_info->domain_name == NULL, error, ret,
++            NA_NOMEM_ERROR, "Could not duplicate NA info domain name");
      } else {
          /* Get protocol name */
          na_info->protocol_name = strdup(token);
@@ -42,8 +42,7 @@ index 1cd6556..d372e1d 100644
                  src_addrlen = sizeof(*na_ofi_sin_addr);
                  /* Make sure we are using the right domain */
 -                strncpy(domain_name, ifa_name, NA_OFI_MAX_URI_LEN - 1);
-+//                strncpy(domain_name, ifa_name, NA_OFI_MAX_URI_LEN - 1);
-+		strncpy(domain_name, na_info->domain_name, NA_OFI_MAX_URI_LEN - 1);
++                strncpy(domain_name, na_info->domain_name, NA_OFI_MAX_URI_LEN - 1);
                  free(ifa_name);
              } else {
                  /* Allow for passing domain name directly */
