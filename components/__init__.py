@@ -369,7 +369,7 @@ def define_components(reqs):
                 # psm2 hard-codes installing into /usr/...
                 commands=['sed -i -e "s/\\(.{DESTDIR}\\/\\)usr\\//\\1/" ' +
                           '       -e "s/\\(INSTALL_LIB_TARG=' +
-                                      '\\/usr\\/lib\\)64/\\1/" ' +
+                          '\\/usr\\/lib\\)64/\\1/" ' +
                           '       -e "s/\\(INSTALL_LIB_TARG=\\)\\/usr/\\1/" ' +
                           'Makefile compat/Makefile',
                           'make $JOBS_OPT',
