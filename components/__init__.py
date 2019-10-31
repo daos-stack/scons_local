@@ -368,10 +368,12 @@ def define_components(reqs):
                     'https://github.com/intel/opa-psm2.git'),
                 # psm2 hard-codes installing into /usr/...
                 commands=['sed -i -e "s/\\(.{DESTDIR}\\/\\)usr\\//\\1/" ' +
-                          '       -e "s/\\(INSTALL_LIB_TARG=\\/usr\\/lib\\)64/\\1/" ' +
+                          '       -e "s/\\(INSTALL_LIB_TARG=' +
+                                      '\\/usr\\/lib\\)64/\\1/" ' +
                           '       -e "s/\\(INSTALL_LIB_TARG=\\)\\/usr/\\1/" ' +
                           'Makefile compat/Makefile',
-                          'make $JOBS_OPT', 'make DESTDIR=$PSM2_PREFIX install'],
+                          'make $JOBS_OPT',
+                          'make DESTDIR=$PSM2_PREFIX install'],
                 libs=['libpsm2'])
 
 __all__ = ['define_components']
