@@ -211,6 +211,8 @@ def define_pmix(reqs):
                                 'external'),
                           'make $JOBS_OPT', 'make install'],
                 libs=['open-rte'],
+                extra_lib_path=['/usr/lib64/openmpi3/lib/'],
+                extra_include_path=['/usr/include/openmpi3-x86_64/'],
                 required_progs=['g++', 'flex'],
                 requires=['pmix', 'hwloc', 'event'],
                 package='ompi-devel' if inst(reqs, 'ompi') else None)
