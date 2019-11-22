@@ -101,9 +101,8 @@ def define_mercury(reqs):
                           '--enable-psm2' +
                           check(reqs, 'psm2',
                                 "=$PSM2_PREFIX "
-                                'LDFLAGS="-L$PSM2_PREFIX/lib '
-                                '-Wl,-rpath=$PSM2_PREFIX/lib '
-                                '-Wl,--enable-new-dtags" ', ''),
+                                'LDFLAGS="-Wl,--enable-new-dtags '
+                                '-Wl,-rpath=$PSM2_PREFIX/lib" ', ''),
                           'make $JOBS_OPT',
                           'make install'],
                 libs=['fabric'],
