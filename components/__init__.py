@@ -99,7 +99,11 @@ def define_mercury(reqs):
                 commands=['./autogen.sh',
                           './configure --prefix=$OFI_PREFIX ' +
                           '--enable-psm2' +
-                          check(reqs, 'psm2', "=$PSM2_PREFIX", ''),
+                          check(reqs, 'psm2',
+                                "=$PSM2_PREFIX "
+                                'LDFLAGS="-L$PSM2_PREFIX/lib '
+                                '-Wl,-rpath=$PSM2_PREFIX/lib '
+                                '-Wl,--enable-new-dtags" ', ''),
                           'make $JOBS_OPT',
                           'make install'],
                 libs=['fabric'],
@@ -374,6 +378,6 @@ def define_components(reqs):
                           'Makefile compat/Makefile',
                           'make $JOBS_OPT',
                           'make DESTDIR=$PSM2_PREFIX install'],
-                libs=['libpsm2'])
+                libs=['psm2'])
 
 __all__ = ['define_components']
