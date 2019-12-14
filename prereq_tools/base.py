@@ -72,10 +72,6 @@ class EnvironmentModule():
         self._module_func = self._init_module_func(lambda *x: False)
         self._module_load = self._init_mpi_module()
 
-    def set_module_func(self, func):
-        """Set the mpi module func"""
-        self._module_func = func
-
     @staticmethod
     def _module_old(*args):
         """invoke module and save environment"""
@@ -106,6 +102,8 @@ class EnvironmentModule():
             return self._module_old
 
         try:
+            # if successful, this will define module, a function
+            # that invokes module on the command line
             exec(open(init_file).read())
         except KeyError:
             return default_func
