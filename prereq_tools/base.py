@@ -1083,6 +1083,8 @@ class PreReqComponent():
             self.require(env, comp)
 
     def modify_prefix(self, comp_def, env):
+        if comp_def.package:
+            return
         """Overwrite the prefix in cases where we may be using the default"""
         prebuilt1 = os.path.join(env.subst("$PREBUILT_PREFIX"),
                                  comp_def.name)
