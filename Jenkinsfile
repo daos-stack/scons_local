@@ -257,6 +257,7 @@ pipeline {
           steps {
             sconsBuild target: 'cart',
                        scons_local_replace: true,
+                       USE_INSTALLED: 'none',
                        scm: [url: 'https://github.com/daos-stack/cart.git',
                              cleanAfterCheckout: true,
                              withSubmodules: true]
@@ -279,7 +280,6 @@ pipeline {
             sconsBuild target: 'daos',
                        REQUIRES: 'pmdk,argobots,isal,protobufc',
                        directory: 'scons_local',
-                       USE_INSTALLED: 'none',
                        scons_local_replace: true,
                        scm: [url: 'https://github.com/daos-stack/daos.git',
                              cleanAfterCheckout: true,
