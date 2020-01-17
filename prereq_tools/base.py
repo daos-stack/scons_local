@@ -755,7 +755,7 @@ class PreReqComponent():
         self.__opts.Add('USE_INSTALLED',
                         'Comma separated list of preinstalled dependencies',
                         'none')
-        self.add_opts(ListVariable('BYPASS', "Components to skip building",
+        self.add_opts(ListVariable('EXCLUDE', "Components to skip building",
                                    'none', ['psm2']))
         self.add_opts(('MPI_PKG',
                        'Specifies name of pkg-config to load for MPI', None))
@@ -807,7 +807,7 @@ class PreReqComponent():
             self.configs.read(config_file)
 
         self.installed = env.subst("$USE_INSTALLED").split(",")
-        self.bypass = env.subst("$BYPASS").split(",")
+        self.exclude = env.subst("$EXCLUDE").split(",")
 # pylint: enable=too-many-branches
 
     def _setup_intelc(self):

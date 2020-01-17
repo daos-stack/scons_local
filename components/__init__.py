@@ -36,11 +36,11 @@ if PROCESSOR.lower() in [x.lower() for x in ARM_LIST]:
 
 NINJA_PROG = ProgramBinary('ninja', ["ninja-build", "ninja"])
 
-def bypass(reqs, name, use_value, bypass_value):
-    """Return True if in bypass list"""
-    if set([name, 'all']).intersection(set(reqs.bypass)):
-        print("Bypassing %s build" % name)
-        return bypass_value
+def exclude(reqs, name, use_value, exclude_value):
+    """Return True if in exclude list"""
+    if set([name, 'all']).intersection(set(reqs.exclude)):
+        print("Excluding %s from build" % name)
+        return exclude_value
     return use_value
 
 def inst(reqs, name):
@@ -104,17 +104,17 @@ def define_mercury(reqs):
                 retriever=retriever,
                 commands=['./autogen.sh',
                           './configure --prefix=$OFI_PREFIX ' +
-                          bypass(reqs, 'psm2',
-                                 '--enable-psm2' +
-                                 check(reqs, 'psm2',
-                                       "=$PSM2_PREFIX "
-                                       'LDFLAGS="-Wl,--enable-new-dtags '
-                                       '-Wl,-rpath=$PSM2_PREFIX/lib" ', ''),
-                                 ''),
+                          exclude(reqs, 'psm2',
+                                  '--enable-psm2' +
+                                  check(reqs, 'psm2',
+                                        "=$PSM2_PREFIX "
+                                        'LDFLAGS="-Wl,--enable-new-dtags '
+                                        '-Wl,-rpath=$PSM2_PREFIX/lib" ', ''),
+                                  ''),
                           'make $JOBS_OPT',
                           'make install'],
                 libs=['fabric'],
-                requires=bypass(reqs, 'psm2', ['psm2'], []),
+                requires=exclude(reqs, 'psm2', ['psm2'], []),
                 headers=['rdma/fabric.h'],
                 package='libfabric-devel' if inst(reqs, 'ofi') else None)
 
