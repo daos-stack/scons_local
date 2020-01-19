@@ -1642,7 +1642,7 @@ class _Component():
         lib_paths = []
 
         # Make sure CheckProg() looks in the component's bin/ dir
-        if not self.use_installed:
+        if not self.use_installed or not self.component_prefix == "/usr":
             env.AppendENVPath('PATH', os.path.join(self.component_prefix,
                                                    'bin'))
 
