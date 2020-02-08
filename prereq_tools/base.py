@@ -767,7 +767,6 @@ class PreReqComponent():
         self.setup_path_var('TARGET_PREFIX')
         self.setup_path_var('SRC_PREFIX', True)
         self.setup_path_var('GOPATH')
-        self.setup_patch_prefix()
         self.__build_info = BuildInfo()
         self.__build_info.update("PREFIX", self.__env.subst("$PREFIX"))
 
@@ -932,17 +931,6 @@ class PreReqComponent():
                        '(warning|error} [error]')
         SetOption("implicit_cache", True)
 
-    def setup_patch_prefix(self):
-        """Discovers the location of the patches directory and adds it to
-           the construction environment."""
-        patch_dirs = [os.path.join(self.__top_dir,
-                                   "scons_local", "sl_patches"),
-                      os.path.join(self.__top_dir, "sl_patches")]
-        for patch_dir in patch_dirs:
-            if os.path.exists(patch_dir):
-                self.replace_env(**{'PATCH_PREFIX': patch_dir})
-                break
-
     def __setup_unit_test_builders(self):
         """Setup unit test builders for general use"""
         AddOption('--utest-mode',
@@ -1016,7 +1004,6 @@ class PreReqComponent():
         required_libs -- A list of system libraries to be checked for
         defines -- Defines needed to use the component
         package -- Name of package to install
-        patch -- Patch to apply to sources after checkout and before building
         commands -- A list of commands to run to build the component
         retriever -- A retriever object to download component
         extra_lib_path -- Subdirectories to add to dependent component path
@@ -1290,7 +1277,6 @@ class _Component():
         requires -- A list of names of required component definitions
         commands -- A list of commands to run to build the component
         package -- Name of package to install
-        patch -- Patch to apply to sources after checkout and before building
         retriever -- A retriever object to download component
         extra_lib_path -- Subdirectories to add to dependent component path
         extra_include_path -- Subdirectories to add to dependent component path
@@ -1321,7 +1307,6 @@ class _Component():
         self.defines = kw.get("defines", [])
         self.headers = kw.get("headers", [])
         self.requires = kw.get("requires", [])
-        self.patches = kw.get("patch", None)
         self.prereqs = prereqs
         self.pkgconfig = kw.get("pkgconfig", None)
         self.name = name
@@ -1357,8 +1342,6 @@ class _Component():
         """parse the patches variable"""
         patchnum = 1
         patchstr = self.prereqs.get_config("patch_versions", self.name)
-        if patchstr is None:
-            patchstr = self.patches
         if patchstr is None:
             return []
         patches = []
