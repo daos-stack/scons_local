@@ -1373,7 +1373,7 @@ class _Component():
             command = ['rm -rf %s' % patch_name,
                        'curl -L -o %s %s' % (patch_path, raw)]
             if not RUNNER.run_commands(command):
-                raise BuildFailure(patch)
+                raise BuildFailure(raw)
             patches.append(patch_path)
         return patches
 
