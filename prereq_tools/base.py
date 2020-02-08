@@ -1370,7 +1370,7 @@ class _Component():
             patch_name = "%s_patch_%03d" % (self.name, patchnum)
             patch_path = os.path.join(self.patch_path, patch_name)
             patchnum += 1
-            command = ['rm -rf %s' % patch_name,
+            command = ['rm -f %s' % patch_path,
                        'curl -L -o %s %s' % (patch_path, raw)]
             if not RUNNER.run_commands(command):
                 raise BuildFailure(raw)
