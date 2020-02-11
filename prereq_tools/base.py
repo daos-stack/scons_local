@@ -798,7 +798,7 @@ class PreReqComponent():
 
         for comp in comps:
             try:
-                path = self.get_src_path(comp)
+                self.get_src_path(comp)
             except MissingPath as _error:
                 print("%s source not found" % comp)
                 return False
