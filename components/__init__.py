@@ -316,7 +316,7 @@ def define_components(reqs):
                           'mkdir -p "$SPDK_PREFIX/share/spdk"',
                           'cp -r include scripts examples/nvme/fio_plugin ' \
                           '"$SPDK_PREFIX/share/spdk"'],
-                libs=['spdk'],
+                libs=['rte_bus_pci'],
                 requires=['fio'])
 
     url = 'https://github.com/protobuf-c/protobuf-c/releases/download/' \
