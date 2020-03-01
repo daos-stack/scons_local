@@ -298,26 +298,15 @@ def define_components(reqs):
                 requires=['mercury', 'uuid', 'crypto', 'boost', 'yaml'],
                 package='cart-devel' if inst(reqs, 'cart') else None)
 
-    reqs.define('fio',
-                retriever=GitRepoRetriever(
-                    'https://github.com/axboe/fio.git'),
-                commands=['git checkout fio-3.3',
-                          './configure --prefix="$FIO_PREFIX"',
-                          'make $JOBS_OPT', 'make install'],
-                progs=['genfio', 'fio'])
-
     retriever = GitRepoRetriever("https://github.com/spdk/spdk.git", True)
     reqs.define('spdk',
                 retriever=retriever,
-                commands=['./configure --prefix="$SPDK_PREFIX" --with-shared ' \
-                          ' --with-fio="$FIO_SRC"',
+                commands=['./configure --prefix="$SPDK_PREFIX" --without-vhost',
                           'make $JOBS_OPT', 'make install',
                           'cp dpdk/build/lib/* "$SPDK_PREFIX/lib"',
                           'mkdir -p "$SPDK_PREFIX/share/spdk"',
-                          'cp -r include scripts examples/nvme/fio_plugin ' \
-                          '"$SPDK_PREFIX/share/spdk"'],
-                libs=['rte_bus_pci'],
-                requires=['fio'])
+                          'cp -r include scripts "$SPDK_PREFIX/share/spdk"'],
+                libs=['rte_bus_pci'])
 
     url = 'https://github.com/protobuf-c/protobuf-c/releases/download/' \
         'v1.3.0/protobuf-c-1.3.0.tar.gz'
