@@ -298,6 +298,14 @@ def define_components(reqs):
                 requires=['mercury', 'uuid', 'crypto', 'boost', 'yaml'],
                 package='cart-devel' if inst(reqs, 'cart') else None)
 
+    reqs.define('fio',
+                retriever=GitRepoRetriever(
+                    'https://github.com/axboe/fio.git'),
+                commands=['git checkout fio-3.3',
+                          './configure --prefix="$FIO_PREFIX"',
+                          'make $JOBS_OPT', 'make install'],
+                progs=['genfio', 'fio'])
+
     retriever = GitRepoRetriever("https://github.com/spdk/spdk.git", True)
     reqs.define('spdk',
                 retriever=retriever,
