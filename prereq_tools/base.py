@@ -823,7 +823,7 @@ class PreReqComponent():
                                            "-diag-disable=10237"])
 
 
-    def _setup_compiler(self):
+    def _setup_compiler(self, warning_level):
         """Setup the compiler to use"""
         compiler_map = {'gcc': {'CC' : 'gcc', 'CXX' : 'g++'},
                         'covc' : {'CC' : '/opt/BullseyeCoverage/bin/gcc',
