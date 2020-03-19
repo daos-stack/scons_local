@@ -33,7 +33,7 @@ class _env_module():
     """Class for utilizing Modules component to load environment modules"""
     env_module_init = None
     _mpi_map = {"mpich":['mpi/mpich-x86_64', 'gnu-mpich/3.3'],
-                "openmpi":['mpi/openmpi3-x86_64', 'gnu-openmpi',
+                "openmpi":['gnu-openmpi', 'mpi/openmpi3-x86_64',
                            'mpi/openmpi-x86_64']}
 
     def __init__(self):
