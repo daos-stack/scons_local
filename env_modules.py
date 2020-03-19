@@ -32,7 +32,7 @@ import re
 class _env_module():
     """Class for utilizing Modules component to load environment modules"""
     env_module_init = None
-    _mpi_map = {"mpich":['mpi/mpich-x86_64', 'mpich'],
+    _mpi_map = {"mpich":['mpi/mpich-x86_64', 'gnu-mpich/3.3'],
                 "openmpi":['mpi/openmpi3-x86_64', 'gnu-openmpi',
                            'mpi/openmpi-x86_64']}
 
@@ -138,7 +138,8 @@ class _env_module():
                 self._module_func('unload', to_unload)
 
         for to_load in load:
-            if self._module_func('load', to_load):
+            if self._module_func('is-avail', to_load) and \
+               self._module_func('load', to_load):
                 print("Loaded %s" % to_load)
                 return True
 
@@ -201,3 +202,9 @@ def load_mpi(mpi):
     if _env_module.env_module_init is None:
         _env_module.env_module_init = _env_module()
     return _env_module.env_module_init.load_mpi(mpi)
+
+def list_mpis(mpi):
+    """global function to return list of MPIs"""
+    if _env_module.env_module_init is None:
+        _env_module.env_module_init = _env_module()
+    return _env_module._mpi_map[mpi]
