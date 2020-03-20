@@ -21,6 +21,7 @@
 """Wrapper for Modules so we can load an MPI before builds or tests"""
 from __future__ import print_function
 import os
+import sys
 import subprocess
 from subprocess import PIPE, Popen
 from distutils.spawn import find_executable
@@ -48,11 +49,15 @@ class _env_module(): # pylint: disable=invalid-name
         proc = Popen(cmd, stdout=PIPE, stderr=PIPE)
         stdout, stderr = proc.communicate()
 
-        print("script: ", stdout.decode())
-        print("dir: ", dir())
-        exec(stdout.decode()) # pylint: disable=exec-used
+        if sys.version_info[0] > 2:
+            ns = {}
+            exec(stdout.decode(), ns) # pylint: disable=exec-used
 
-        return _mlstatus, stderr.decode() # pylint: disable=undefined-variable
+            return ns['_mlstatus'], stderr.decode()
+        else:
+            exec(stdout.decode()) # pylint: disable=exec-used
+
+            return _mlstatus, stderr.decode() # pylint: disable=undefined-variable
 
 
     def _init_mpi_module(self):
