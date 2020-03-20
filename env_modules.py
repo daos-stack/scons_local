@@ -48,7 +48,8 @@ class _env_module(): # pylint: disable=invalid-name
         proc = Popen(cmd, stdout=PIPE, stderr=PIPE)
         stdout, stderr = proc.communicate()
 
-        print(stdout.decode())
+        print("script: ", stdout.decode())
+        print("dir: ", dir())
         exec(stdout.decode()) # pylint: disable=exec-used
 
         return _mlstatus, stderr.decode() # pylint: disable=undefined-variable
