@@ -49,12 +49,15 @@ class _env_module(): # pylint: disable=invalid-name
         proc = Popen(cmd, stdout=PIPE, stderr=PIPE)
         stdout, stderr = proc.communicate()
 
+        print("Going to exec: ", stdout.decode())
         if sys.version_info[0] > 2:
+            print("Using Py3 exec()")
             ns = {}
             exec(stdout.decode(), ns) # pylint: disable=exec-used
 
             return ns['_mlstatus'], stderr.decode()
         else:
+            print("Using Py2 exec")
             exec(stdout.decode()) # pylint: disable=exec-used
 
             return _mlstatus, stderr.decode() # pylint: disable=undefined-variable
