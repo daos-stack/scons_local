@@ -40,7 +40,8 @@ class _env_module(): # pylint: disable=invalid-name
         os.environ["MODULEPATH"] = ":".join([os.path.sep +
                                             os.path.join("usr", "share",
                                                          "modules")] +
-                                            os.environ["MODULEPATH"].split(":"))
+                                            os.environ.get("MODULEPATH",
+                                                           "").split(":"))
         self._module_load = self._init_mpi_module()
 
     def _module_func(self, command, *arguments):
