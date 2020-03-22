@@ -29,7 +29,7 @@ from distutils.spawn import find_executable
 class _env_module(): # pylint: disable=invalid-name
     """Class for utilizing Modules component to load environment modules"""
     env_module_init = None
-    _mpi_map = {"mpich":['mpi/mpich-x86_64', 'gnu-mpich/3.3'],
+    _mpi_map = {"mpich":['mpi/mpich-x86_64', 'gnu-mpich'],
                 "openmpi":['mpi/openmpi3-x86_64', 'gnu-openmpi',
                            'mpi/openmpi-x86_64']}
 
