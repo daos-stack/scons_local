@@ -52,7 +52,7 @@ class _env_module(): # pylint: disable=invalid-name
         else:
             cmd += list(arguments)
 
-        print("Running ", cmd)
+        print("Running ", cmd, "with MODULEPATH: ", os.environ["MODULEPATH"])
         proc = Popen(cmd, stdout=PIPE, stderr=PIPE)
         stdout, stderr = proc.communicate()
 
