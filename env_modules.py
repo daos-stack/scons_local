@@ -38,10 +38,13 @@ class _env_module(): # pylint: disable=invalid-name
         # Leap 15's lmod-lua doesn't include the usual module path
         # in it's MODULEPATH, for some unknown reason
         os.environ["MODULEPATH"] = ":".join([os.path.sep +
-                                            os.path.join("usr", "share",
-                                                         "modules")] +
-                                            os.environ.get("MODULEPATH",
-                                                           "").split(":"))
+                                             os.path.join("usr", "share",
+                                                          "modules"),
+                                             os.path.sep +
+                                             os.path.join("etc", 
+                                                          "modulefiles")] +
+                                             os.environ.get("MODULEPATH",
+                                                            "").split(":"))
         self._module_load = self._init_mpi_module()
 
     def _module_func(self, command, *arguments):
