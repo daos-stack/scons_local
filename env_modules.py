@@ -41,7 +41,7 @@ class _env_module(): # pylint: disable=invalid-name
                                              os.path.join("usr", "share",
                                                           "modules"),
                                              os.path.sep +
-                                             os.path.join("etc", 
+                                             os.path.join("etc",
                                                           "modulefiles")] +
                                              os.environ.get("MODULEPATH",
                                                             "").split(":"))

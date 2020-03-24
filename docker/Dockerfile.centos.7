@@ -41,7 +41,7 @@
 
 # Pull base image
 FROM centos:7
-MAINTAINER Johann Lombardi <johann.lombardi@intel.com>
+MAINTAINER <daos@daos.groups.io>
 
 # Build arguments can be set via --build-arg
 # use same UID as host and default value of 1000 if not specified
@@ -63,7 +63,7 @@ RUN yum -y install                                                 \
            libyaml-devel                                           \
            scons pylint file ShellCheck python-pep8 lcov python    \
            python2-pygithub yum-plugin-copr hwloc-devel            \
-           openmpi3-devel
+           openmpi3-devel Lmod
 
 # external deps build/repos
 # sadly this doesn't work

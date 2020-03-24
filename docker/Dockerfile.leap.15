@@ -41,6 +41,9 @@ home:/jhli/SLE_15/home:jhli.repo; \
   pip2 install --upgrade pip; pip2 install -U setuptools wheel; \
   pip2 install scons==3.0.1 PyGithub==1.39
 
+RUN zypper --non-interactive rm Modules;                                                                                                                                                  \
+    zypper --non-interactive install --allow-unsigned-rpm https://build.hpdd.intel.com/job/daos-stack/job/lua-lmod/job/PR-1/lastSuccessfulBuild/artifact/artifacts/leap15/lua-lmod-8.2.5-lp152.1.01.x86_64.rpm
+
 ENV GO_TARBALL go1.9.7.linux-amd64.tar.gz
 RUN curl -k "https://dl.google.com/go/${GO_TARBALL}" \
          -o "${GO_TARBALL}"; \
