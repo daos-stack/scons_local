@@ -111,7 +111,6 @@ pipeline {
     GIT_PREVIOUS_COMMIT = "${env.GIT_PREVIOUS_COMMIT ? env.GIT_PREVIOUS_COMMIT : params.PGIT_PREVIOUS_COMMIT}"
     GIT_PREVIOUS_SUCCESSFUL_COMMIT = "${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT ? env.GIT_PREVIOUS_SUCCESSFUL_COMMIT : params.PGIT_PREVIOUS_SUCCESSFUL_COMMIT}"
 
-    FUSE_COMMIT = '7bf25b6987d84c816aebd5325b95cfa0d311b1e6'
     MERCURY_COMMIT = '674e7f2bd17b5d8b85606cd152dd1bc189899b0e'
     OFI_COMMIT = '8c33f9d63d536cc3781017dd25b7bb480ac96cb5'
     OPENPA_COMMIT = '8e1e74feb22d2e733f34a96e6c7834fed3073c52'
@@ -154,35 +153,6 @@ pipeline {
             checkPatch review_creds: "${env.GITHUB_CREDS}"
           } // steps
         } // stage ('code_lint_check')
-        stage ('fuse build') {
-          agent {
-            dockerfile {
-              filename "${params.PDOCKERFILE ? params.PDOCKERFILE : 'Dockerfile.centos.7'}"
-              dir 'scons_local/docker'
-              label 'docker_runner'
-              additionalBuildArgs "-t ${sanitized_JOB_NAME}-centos7 " +
-                                  '$BUILDARGS'
-            }
-          } // agent
-          steps {
-            // Older scons_local_review only used master branch.
-            // Newer one looked up the last known good build of master branch.
-            // Pipeline currently does not have access that info.
-            sh 'rm -rf testbin/ && mkdir -p testbin'
-            sh 'rm -rf srcpath/fuse'
-            sconsBuild target: 'fuse',
-                       directory: 'scons_local',
-                       scm: [url: 'https://github.com/libfuse/libfuse.git',
-                             branch: "${env.FUSE_COMMIT}",
-                             checkoutDir: 'srcpath/fuse',
-                             cleanAfterCheckout: true],
-                       no_install: true,  // No separate install step
-                       SRC_PREFIX: '\${WORKSPACE}/srcpath',
-                       TARGET_PREFIX: '/testbin',
-                       target_work: 'testbin'
-            echo "fuse build succeeded"
-          } // steps
-        } // stage ('fuse build')
         stage ('openpa prebuild') {
           agent {
             dockerfile {
