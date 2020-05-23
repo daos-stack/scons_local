@@ -290,9 +290,13 @@ def define_components(reqs):
 
     retriever = GitRepoRetriever("https://github.com/daos-stack/cart",
                                  True)
+    fi_opt = ""
+    if reqs.get_env("BUILD_TYPE") in ["debug", "dev"]:
+        fi_opt = " --with-fault-injection "
     reqs.define('cart',
                 retriever=retriever,
                 commands=[SCONS_EXE + " --config=force $JOBS_OPT "
+                          + fi_opt +
                           "MERCURY_PREBUILT=$MERCURY_PREFIX "
                           "PREFIX=$CART_PREFIX "
                           "MPI_PKG=$MPI_PKG "
