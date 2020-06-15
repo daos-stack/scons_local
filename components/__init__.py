@@ -147,6 +147,7 @@ def define_mercury(reqs):
     retriever = \
         GitRepoRetriever('https://github.com/mercury-hpc/mercury.git',
                          True)
+    retriever.apply_patches('utils', 'mercury_bump_unexpected_size.patch')
     reqs.define('mercury',
                 retriever=retriever,
                 commands=['cmake -DMERCURY_USE_CHECKSUMS=OFF '
