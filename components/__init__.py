@@ -97,10 +97,7 @@ def define_mercury(reqs):
         reqs.define('rt', libs=['rt'])
     reqs.define('stdatomic', headers=['stdatomic.h'])
 
-    if reqs.check_component('stdatomic'):
-        atomic = 'stdatomic'
-    else:
-        atomic = 'openpa'
+    atomic = 'openpa'
 
     reqs.define('psm2',
                 retriever=GitRepoRetriever(
@@ -288,6 +285,28 @@ def define_components(reqs):
         reqs.define('fuse', libs=['fuse3'], defines=["FUSE_USE_VERSION=32"],
                     headers=['fuse3/fuse.h'], package='fuse3-devel')
 
+
+    reqs.define('fio',
+                retriever=GitRepoRetriever(
+                    'https://github.com/axboe/fio.git'),
+                commands=['./configure --prefix="$FIO_PREFIX"',
+                          'make $JOBS_OPT', 'make install'],
+                progs=['genfio', 'fio'])
+
+    retriever = GitRepoRetriever("https://github.com/spdk/spdk.git", True)
+    reqs.define('spdk',
+                retriever=retriever,
+                commands=['./configure --prefix="$SPDK_PREFIX" --with-shared ' \
+                          ' --with-fio="$FIO_SRC"',
+                          'make $JOBS_OPT', 'make install',
+                          'cp dpdk/build/lib/* "$SPDK_PREFIX/lib"',
+                          'cp -Lr dpdk/build/include/* "$SPDK_PREFIX/include"',
+                          'mkdir -p "$SPDK_PREFIX/share/spdk"',
+                          'cp -r include scripts examples/nvme/fio_plugin ' \
+                          '"$SPDK_PREFIX/share/spdk"'],
+                libs=['spdk'],
+                requires=['fio'])
+
     retriever = GitRepoRetriever("https://github.com/daos-stack/cart",
                                  True)
     fi_opt = ""
@@ -304,28 +323,8 @@ def define_components(reqs):
                           "install"],
                 headers=["cart/api.h", "gurt/list.h"],
                 libs=["cart", "gurt"],
-                requires=['mercury', 'uuid', 'crypto', 'boost', 'yaml'],
+                requires=['mercury', 'uuid', 'crypto', 'boost', 'yaml', 'spdk'],
                 package='cart-devel' if inst(reqs, 'cart') else None)
-
-    reqs.define('fio',
-                retriever=GitRepoRetriever(
-                    'https://github.com/axboe/fio.git'),
-                commands=['./configure --prefix="$FIO_PREFIX"',
-                          'make $JOBS_OPT', 'make install'],
-                progs=['genfio', 'fio'])
-
-    retriever = GitRepoRetriever("https://github.com/spdk/spdk.git", True)
-    reqs.define('spdk',
-                retriever=retriever,
-                commands=['./configure --prefix="$SPDK_PREFIX" --with-shared ' \
-                          ' --with-fio="$FIO_SRC"',
-                          'make $JOBS_OPT', 'make install',
-                          'cp dpdk/build/lib/* "$SPDK_PREFIX/lib"',
-                          'mkdir -p "$SPDK_PREFIX/share/spdk"',
-                          'cp -r include scripts examples/nvme/fio_plugin ' \
-                          '"$SPDK_PREFIX/share/spdk"'],
-                libs=['spdk'],
-                requires=['fio'])
 
     url = 'https://github.com/protobuf-c/protobuf-c/releases/download/' \
         'v1.3.0/protobuf-c-1.3.0.tar.gz'
